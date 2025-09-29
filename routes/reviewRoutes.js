@@ -15,11 +15,11 @@ const { protect } = require('../middleware/authMiddleware.js');
  *       properties:
  *         rating:
  *           type: number
- *           description: The rating given by the user (1-5).
+ *           description: คะแนนที่ผู้ใช้ให้ (1-5)
  *           example: 5
  *         comment:
  *           type: string
- *           description: The review comment.
+ *           description: ความคิดเห็นเกี่ยวกับทรงผม
  *           example: "ทรงนี้ตัดแล้วสวยมากครับ"
  *         user:
  *           type: object
@@ -28,11 +28,11 @@ const { protect } = require('../middleware/authMiddleware.js');
  *               type: string
  *             username:
  *               type: string
- *           description: The user who wrote the review.
+ *           description: ผู้ใช้ที่เขียนรีวิว
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: The date the review was created.
+ *           description: วันที่เขียนรีวิว
  *     ReviewBody:
  *       type: object
  *       required:
@@ -51,14 +51,14 @@ const { protect } = require('../middleware/authMiddleware.js');
  * @swagger
  * tags:
  *   - name: Reviews
- *     description: Review management for hairstyles
+ *     description: จัดการรีวิวทรงผม
  */
 
 /**
  * @swagger
  * /api/hairstyles/{id}/reviews:
  *   get:
- *     summary: Get all reviews for a specific hairstyle
+ *     summary: ดูรีวิวทั้งหมดของทรงผมที่ระบุ
  *     tags: [Reviews]
  *     parameters:
  *       - in: path
@@ -66,10 +66,10 @@ const { protect } = require('../middleware/authMiddleware.js');
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the hairstyle
+ *         description: รหัสของทรงผม
  *     responses:
  *       200:
- *         description: A list of reviews for the hairstyle
+ *         description: รายการรีวิวของทรงผมนี้
  *         content:
  *           application/json:
  *             schema:
@@ -77,9 +77,9 @@ const { protect } = require('../middleware/authMiddleware.js');
  *               items:
  *                 $ref: '#/components/schemas/Review'
  *       404:
- *         description: Hairstyle not found
+ *         description: ไม่พบทรงผม
  *   post:
- *     summary: Create a new review for a hairstyle
+ *     summary: เพิ่มรีวิวใหม่ให้ทรงผมนี้
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -89,7 +89,7 @@ const { protect } = require('../middleware/authMiddleware.js');
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the hairstyle to review
+ *         description: รหัสของทรงผมที่ต้องการรีวิว
  *     requestBody:
  *       required: true
  *       content:
@@ -98,13 +98,13 @@ const { protect } = require('../middleware/authMiddleware.js');
  *             $ref: '#/components/schemas/ReviewBody'
  *     responses:
  *       201:
- *         description: Review added successfully
+ *         description: เพิ่มรีวิวสำเร็จ
  *       400:
- *         description: Bad request (e.g., user already reviewed)
+ *         description: คำขอไม่ถูกต้อง (เช่น รีวิวซ้ำ)
  *       401:
- *         description: Unauthorized (user not logged in)
+ *         description: ไม่ได้รับอนุญาต (ยังไม่เข้าสู่ระบบ)
  *       404:
- *         description: Hairstyle not found
+ *         description: ไม่พบทรงผม
  */
 
 router.route('/')
