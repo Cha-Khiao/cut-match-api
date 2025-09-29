@@ -21,38 +21,38 @@ const { protect } = require('../middleware/authMiddleware.js');
  *       properties:
  *         _id:
  *           type: string
- *           description: รหัสคอมเมนต์ที่ระบบสร้างให้อัตโนมัติ
+ *           description: The auto-generated ID of the comment
  *         postId:
  *           type: string
- *           description: รหัสโพสต์ที่คอมเมนต์นี้เป็นของโพสต์นั้น
+ *           description: The ID of the post the comment belongs to
  *         userId:
  *           type: string
- *           description: รหัสผู้ใช้ที่สร้างคอมเมนต์นี้
+ *           description: The ID of the user who made the comment
  *         content:
  *           type: string
- *           description: เนื้อหาของคอมเมนต์
+ *           description: The content of the comment
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: วันที่คอมเมนต์ถูกสร้าง
+ *           description: The date when the comment was created
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: วันที่คอมเมนต์ถูกแก้ไขล่าสุด
+ *           description: The date when the comment was last updated
  */
 
 /**
  * @swagger
  * tags:
  *   - name: Comments
- *     description: การจัดการคอมเมนต์ (สร้าง, ดึง, ตอบกลับ, แก้ไข, ลบ)
+ *     description: Comment management (create, get, reply, update, delete)
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments:
  *   get:
- *     summary: ดึงคอมเมนต์ทั้งหมดของโพสต์หนึ่ง
+ *     summary: Get all comments for a specific post
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -60,11 +60,11 @@ const { protect } = require('../middleware/authMiddleware.js');
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสโพสต์ที่ต้องการดึงคอมเมนต์
+ *         description: The ID of the post to get comments for
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: รายการคอมเมนต์ของโพสต์
+ *         description: A list of comments for the post
  *         content:
  *           application/json:
  *             schema:
@@ -72,16 +72,16 @@ const { protect } = require('../middleware/authMiddleware.js');
  *               items:
  *                 $ref: '#/components/schemas/Comment'
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบโพสต์ดังกล่าว
+ *         description: Post not found
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments:
  *   post:
- *     summary: เพิ่มคอมเมนต์ในโพสต์หนึ่ง
+ *     summary: Add a comment to a specific post
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -94,24 +94,24 @@ const { protect } = require('../middleware/authMiddleware.js');
  *             properties:
  *               content:
  *                 type: string
- *                 description: เนื้อหาของคอมเมนต์
- *                 example: "โพสต์นี้ดีมากเลย!"
+ *                 description: The content of the comment
+ *                 example: "This is a great post!"
  *     responses:
  *       201:
- *         description: เพิ่มคอมเมนต์สำเร็จ
+ *         description: Comment added successfully
  *       400:
- *         description: คำขอไม่ถูกต้อง (เช่น ขาดเนื้อหา)
+ *         description: Bad request (e.g., missing content)
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบโพสต์ดังกล่าว
+ *         description: Post not found
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments/{id}/reply:
  *   post:
- *     summary: ตอบกลับคอมเมนต์เฉพาะตัว
+ *     summary: Reply to a specific comment
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -121,14 +121,14 @@ const { protect } = require('../middleware/authMiddleware.js');
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสโพสต์ที่คอมเมนต์เป็นของโพสต์นั้น
+ *         description: The ID of the post the comment belongs to
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสคอมเมนต์ที่ต้องการตอบกลับ
+ *         description: The ID of the comment to reply to
  *         example: 60d2b3f04f1a2d001fbc2e7e
  *     requestBody:
  *       required: true
@@ -139,24 +139,24 @@ const { protect } = require('../middleware/authMiddleware.js');
  *             properties:
  *               content:
  *                 type: string
- *                 description: เนื้อหาของการตอบกลับ
- *                 example: "เห็นด้วยกับคุณเลย!"
+ *                 description: The content of the reply
+ *                 example: "I agree with your point!"
  *     responses:
  *       201:
- *         description: ตอบกลับสำเร็จ
+ *         description: Reply added successfully
  *       400:
- *         description: คำขอไม่ถูกต้อง (เช่น ขาดเนื้อหา)
+ *         description: Bad request (e.g., missing content)
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบคอมเมนต์หรือโพสต์ดังกล่าว
+ *         description: Comment or Post not found
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments/{commentId}:
  *   put:
- *     summary: แก้ไขคอมเมนต์เฉพาะตัว
+ *     summary: Update a specific comment
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -166,13 +166,13 @@ const { protect } = require('../middleware/authMiddleware.js');
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสโพสต์ที่คอมเมนต์เป็นของโพสต์นั้น
+ *         description: The ID of the post the comment belongs to
  *       - in: path
  *         name: commentId
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสคอมเมนต์ที่ต้องการแก้ไข
+ *         description: The ID of the comment to update
  *     requestBody:
  *       required: true
  *       content:
@@ -182,24 +182,24 @@ const { protect } = require('../middleware/authMiddleware.js');
  *             properties:
  *               content:
  *                 type: string
- *                 description: เนื้อหาคอมเมนต์ที่แก้ไขแล้ว
- *                 example: "แก้ไขคอมเมนต์ของผมแล้วครับ"
+ *                 description: The updated content of the comment
+ *                 example: "I updated my comment"
  *     responses:
  *       200:
- *         description: แก้ไขคอมเมนต์สำเร็จ
+ *         description: Comment updated successfully
  *       400:
- *         description: คำขอไม่ถูกต้อง (เช่น ข้อมูลไม่ถูกต้อง)
+ *         description: Bad request (e.g., invalid data)
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบคอมเมนต์หรือโพสต์ดังกล่าว
+ *         description: Comment or Post not found
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments/{commentId}:
  *   delete:
- *     summary: ลบคอมเมนต์เฉพาะตัว
+ *     summary: Delete a specific comment
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -209,20 +209,20 @@ const { protect } = require('../middleware/authMiddleware.js');
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสโพสต์ที่คอมเมนต์เป็นของโพสต์นั้น
+ *         description: The ID of the post the comment belongs to
  *       - in: path
  *         name: commentId
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสคอมเมนต์ที่ต้องการลบ
+ *         description: The ID of the comment to delete
  *     responses:
  *       200:
- *         description: ลบคอมเมนต์สำเร็จ
+ *         description: Comment deleted successfully
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบคอมเมนต์หรือโพสต์ดังกล่าว
+ *         description: Comment or Post not found
  */
 
 router.route('/')
@@ -232,7 +232,7 @@ router.route('/')
 router.route('/:id/reply')
   .post(protect, replyToComment);
 
-// --- ✨ Route สำหรับแก้ไขและลบคอมเมนต์ ✨ ---
+// --- ✨ เพิ่ม Route ใหม่สำหรับ แก้ไข/ลบ คอมเมนต์ ✨ ---
 router.route('/:commentId')
   .put(protect, updateComment)
   .delete(protect, deleteComment);
