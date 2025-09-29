@@ -75,7 +75,7 @@ const options = {
       },
       servers: [
         {
-          url: 'https://api-server-two-chi.vercel.app',
+          url: 'https://cut-match-api.vercel.app',
           description: 'Production Server (Vercel)',
         },
         {
