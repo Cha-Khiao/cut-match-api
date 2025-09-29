@@ -23,24 +23,31 @@ const createSalon = asyncHandler(async (req, res) => {
 // @desc    Find salons near a given location
 // @route   GET /api/salons/nearby?lng=100.5&lat=13.7
 const findNearbySalons = asyncHandler(async (req, res) => {
-  const { lng, lat } = req.query;
+  const { lng, lat, search } = req.query;
 
   if (!lng || !lat) {
     res.status(400);
     throw new Error('Longitude and Latitude are required');
   }
 
-  const salons = await Salon.find({
+  let query = {
     location: {
       $near: {
         $geometry: {
            type: "Point" ,
            coordinates: [ parseFloat(lng), parseFloat(lat) ]
         },
-        $maxDistance: 10000 // ค้นหาในรัศมี 10 กิโลเมตร (10000 เมตร)
+        $maxDistance: 20000 // เพิ่มรัศมีเป็น 20 km
       }
     }
-  });
+  };
+
+  // ถ้ามีคำค้นหา ให้เพิ่มเงื่อนไขการค้นหาตามชื่อ
+  if (search) {
+    query.name = { $regex: search, $options: 'i' };
+  }
+
+  const salons = await Salon.find(query);
   res.json(salons);
 });
 
