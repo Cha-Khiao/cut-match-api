@@ -242,6 +242,12 @@ const followUser = asyncHandler(async (req, res) => {
     await currentUser.save();
     await userToFollow.save();
 
+    // --- ✨ สร้าง Notification ✨ ---
+    await Notification.create({
+        recipient: userToFollow._id,
+        sender: currentUser._id,
+        type: 'follow',
+    });
     res.json({ message: `Successfully followed ${userToFollow.username}` });
   } else {
     res.status(404);
