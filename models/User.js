@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
   following: [{ 
     type: mongoose.Schema.Types.ObjectId, ref: 'User' 
   }],
+  salonName: [{ 
+    type: String, default: '' 
+  }],
+  salonMapUrl: [{ 
+    type: String, default: '' 
+  }],
   
 }, { timestamps: true });
 
