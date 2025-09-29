@@ -14,7 +14,6 @@ const { protect } = require('../middleware/authMiddleware.js');
 const upload = require('../middleware/uploadMiddleware.js');
 
 // --- ✨ 2. เชื่อม Comment Routes เข้ามา ✨ ---
-// บอกให้ใช้ commentRouter เมื่อเจอ path ที่ขึ้นต้นด้วย /:postId/comments
 router.use('/:postId/comments', commentRouter);
 
 /**
@@ -29,27 +28,27 @@ router.use('/:postId/comments', commentRouter);
  *       properties:
  *         _id:
  *           type: string
- *           description: The auto-generated ID of the post
+ *           description: รหัสโพสต์ (สร้างอัตโนมัติ)
  *         userId:
  *           type: string
- *           description: The ID of the user who created the post
+ *           description: รหัสของผู้ใช้ที่สร้างโพสต์
  *         content:
  *           type: string
- *           description: The content of the post
+ *           description: เนื้อหาของโพสต์
  *         postImages:
  *           type: array
  *           items:
  *             type: string
  *             format: binary
- *           description: Array of images associated with the post (optional)
+ *           description: รูปภาพที่แนบมากับโพสต์ (ไม่จำเป็น)
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: The date when the post was created
+ *           description: วันที่สร้างโพสต์
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: The date when the post was last updated
+ *           description: วันที่แก้ไขโพสต์ล่าสุด
  *     Comment:
  *       type: object
  *       required:
@@ -58,40 +57,40 @@ router.use('/:postId/comments', commentRouter);
  *       properties:
  *         _id:
  *           type: string
- *           description: The auto-generated ID of the comment
+ *           description: รหัสของความคิดเห็น
  *         postId:
  *           type: string
- *           description: The ID of the post the comment belongs to
+ *           description: รหัสของโพสต์ที่แสดงความคิดเห็น
  *         userId:
  *           type: string
- *           description: The ID of the user who made the comment
+ *           description: รหัสของผู้ใช้ที่แสดงความคิดเห็น
  *         content:
  *           type: string
- *           description: The content of the comment
+ *           description: เนื้อหาของความคิดเห็น
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: The date when the comment was created
+ *           description: วันที่สร้างความคิดเห็น
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: The date when the comment was last updated
+ *           description: วันที่แก้ไขความคิดเห็นล่าสุด
  */
 
 /**
  * @swagger
  * tags:
  *   - name: Posts
- *     description: Post creation, feed, and interaction (like, delete)
+ *     description: การสร้างโพสต์ ฟีด และการมีส่วนร่วม (ไลก์, ลบ)
  *   - name: Comments
- *     description: Post comments management
+ *     description: การจัดการความคิดเห็นในโพสต์
  */
 
 /**
  * @swagger
  * /api/posts:
  *   post:
- *     summary: Create a new post
+ *     summary: สร้างโพสต์ใหม่
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -104,44 +103,44 @@ router.use('/:postId/comments', commentRouter);
  *             properties:
  *               content:
  *                 type: string
- *                 description: The content of the post
- *                 example: "This is my first post!"
+ *                 description: เนื้อหาของโพสต์
+ *                 example: "โพสต์แรกของฉัน!"
  *               postImages:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
- *                 description: Images associated with the post (optional)
- *                 maxItems: 10  # You can adjust the maximum number of files allowed
+ *                 description: รูปภาพแนบโพสต์ (ไม่บังคับ)
+ *                 maxItems: 10
  *     responses:
  *       201:
- *         description: Post created successfully
+ *         description: สร้างโพสต์สำเร็จ
  *       400:
- *         description: Bad request (e.g., missing content or invalid file)
+ *         description: คำขอไม่ถูกต้อง (เช่น ไม่มีเนื้อหาหรือไฟล์ไม่ถูกต้อง)
  *       401:
- *         description: Unauthorized
+ *         description: ไม่มีสิทธิ์เข้าถึง (ยังไม่เข้าสู่ระบบ)
  */
 
 /**
  * @swagger
  * /api/posts/feed:
  *   get:
- *     summary: Get the logged-in user's feed (all posts)
+ *     summary: ดึงโพสต์ทั้งหมดในฟีดของผู้ใช้ที่ล็อกอินอยู่
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: A list of posts from the feed
+ *         description: รายการโพสต์จากฟีด
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  */
 
 /**
  * @swagger
  * /api/posts/user/{userId}:
  *   get:
- *     summary: Get posts of a specific user
+ *     summary: ดูโพสต์ของผู้ใช้ที่ระบุ
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -151,22 +150,22 @@ router.use('/:postId/comments', commentRouter);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the user whose posts to retrieve
+ *         description: รหัสของผู้ใช้ที่ต้องการดูโพสต์
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: List of posts by the user
+ *         description: รายการโพสต์ของผู้ใช้
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: User not found
+ *         description: ไม่พบผู้ใช้
  */
 
 /**
  * @swagger
  * /api/posts/{id}/like:
  *   post:
- *     summary: Like a specific post
+ *     summary: กดไลก์โพสต์ที่ระบุ
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -176,22 +175,22 @@ router.use('/:postId/comments', commentRouter);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the post to like
+ *         description: รหัสของโพสต์ที่ต้องการกดไลก์
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: Successfully liked the post
+ *         description: กดไลก์สำเร็จ
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: Post not found
+ *         description: ไม่พบโพสต์
  */
 
 /**
  * @swagger
  * /api/posts/{id}:
  *   put:
- *     summary: Update a specific post
+ *     summary: แก้ไขโพสต์ที่ระบุ
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -201,7 +200,7 @@ router.use('/:postId/comments', commentRouter);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the post to be updated
+ *         description: รหัสของโพสต์ที่ต้องการแก้ไข
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     requestBody:
  *       required: true
@@ -212,31 +211,26 @@ router.use('/:postId/comments', commentRouter);
  *             properties:
  *               content:
  *                 type: string
- *                 description: The updated content of the post
- *                 example: "This is the updated content of my post!"
+ *                 description: เนื้อหาใหม่ของโพสต์
+ *                 example: "อัปเดตโพสต์ของฉันแล้วนะ!"
  *               postImages:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
- *                 description: Updated images associated with the post (optional)
- *                 maxItems: 10  # You can adjust the maximum number of files allowed
+ *                 description: อัปเดตรูปภาพที่แนบโพสต์ (ไม่บังคับ)
+ *                 maxItems: 10
  *     responses:
  *       200:
- *         description: Post updated successfully
+ *         description: แก้ไขโพสต์สำเร็จ
  *       400:
- *         description: Bad request (e.g., missing content or invalid file)
+ *         description: คำขอไม่ถูกต้อง
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: Post not found
- */
-
-/**
- * @swagger
- * /api/posts/{id}:
+ *         description: ไม่พบโพสต์
  *   delete:
- *     summary: Delete a specific post
+ *     summary: ลบโพสต์ที่ระบุ
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -246,22 +240,22 @@ router.use('/:postId/comments', commentRouter);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the post to be deleted
+ *         description: รหัสของโพสต์ที่ต้องการลบ
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: Successfully deleted the post
+ *         description: ลบโพสต์สำเร็จ
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: Post not found
+ *         description: ไม่พบโพสต์
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments:
  *   get:
- *     summary: Get all comments for a specific post
+ *     summary: ดูความคิดเห็นทั้งหมดของโพสต์ที่ระบุ
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -269,22 +263,17 @@ router.use('/:postId/comments', commentRouter);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the post to get comments for
+ *         description: รหัสของโพสต์
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: List of comments for the post
+ *         description: รายการความคิดเห็นของโพสต์
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: Post not found
- */
-
-/**
- * @swagger
- * /api/posts/{postId}/comments:
+ *         description: ไม่พบโพสต์
  *   post:
- *     summary: Add a comment to a specific post
+ *     summary: เพิ่มความคิดเห็นในโพสต์ที่ระบุ
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -297,24 +286,24 @@ router.use('/:postId/comments', commentRouter);
  *             properties:
  *               content:
  *                 type: string
- *                 description: The content of the comment
- *                 example: "Great post!"
+ *                 description: เนื้อหาของความคิดเห็น
+ *                 example: "ชอบโพสต์นี้มากเลยครับ!"
  *     responses:
  *       201:
- *         description: Comment added successfully
+ *         description: เพิ่มความคิดเห็นสำเร็จ
  *       400:
- *         description: Bad request (e.g., missing content)
- *        401:
- *         description: Unauthorized
+ *         description: คำขอไม่ถูกต้อง (เช่น ไม่มีเนื้อหา)
+ *       401:
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: Post not found
+ *         description: ไม่พบโพสต์
  */
 
 /**
  * @swagger
  * /api/posts/{postId}/comments/{commentId}:
  *   delete:
- *     summary: Delete a specific comment on a post
+ *     summary: ลบความคิดเห็นที่ระบุในโพสต์
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -324,22 +313,23 @@ router.use('/:postId/comments', commentRouter);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the post
+ *         description: รหัสของโพสต์
  *       - in: path
  *         name: commentId
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the comment to be deleted
+ *         description: รหัสของความคิดเห็นที่ต้องการลบ
  *     responses:
  *       200:
- *         description: Successfully deleted the comment
+ *         description: ลบความคิดเห็นสำเร็จ
  *       401:
- *         description: Unauthorized
+ *         description: ไม่ได้รับอนุญาต
  *       404:
- *         description: Comment or Post not found
+ *         description: ไม่พบโพสต์หรือความคิดเห็น
  */
 
+// เส้นทางต่าง ๆ ของโพสต์
 router.route('/')
   .post(protect, upload.array('postImages', 10), createPost);
 
