@@ -288,6 +288,21 @@ const getUserPublicProfile = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Search for users by username
+// @route   GET /api/users/search?q=john
+const searchUsers = asyncHandler(async (req, res) => {
+    const query = req.query.q ? {
+        username: {
+            $regex: req.query.q,
+            $options: 'i' // case-insensitive
+        }
+    } : {};
+
+    // ค้นหาผู้ใช้และส่งกลับไปแค่ข้อมูลที่จำเป็น
+    const users = await User.find(query).select('username profileImageUrl');
+    res.json(users);
+});
+
 
 module.exports = {
   registerUser,
@@ -304,4 +319,5 @@ module.exports = {
   getUserPublicProfile,
   followUser,
   unfollowUser,
+  searchUsers,
 };
