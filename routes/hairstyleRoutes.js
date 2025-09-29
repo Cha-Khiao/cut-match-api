@@ -11,7 +11,7 @@ const {
 } = require('../controllers/hairstyleController.js');
 const { protect, admin } = require('../middleware/authMiddleware.js');
 
-// Middleware สำหรับจัดการ Validation
+// Middleware to handle validation results
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -20,7 +20,6 @@ const validateRequest = (req, res, next) => {
   next();
 };
 
-// เชื่อมเส้นทางรีวิวทรงผม
 router.use('/:id/reviews', reviewRouter);
 
 /**
@@ -37,14 +36,14 @@ router.use('/:id/reviews', reviewRouter);
  *       properties:
  *         _id:
  *           type: string
- *           description: รหัสของทรงผม (สร้างโดยระบบ)
+ *           description: The auto-generated id of the hairstyle
  *         name:
  *           type: string
- *           description: ชื่อของทรงผม
+ *           description: The name of the hairstyle
  *           example: ทรงผมคอมม่า
  *         description:
  *           type: string
- *           description: คำอธิบายสั้น ๆ ของทรงผม
+ *           description: A short description of the hairstyle
  *           example: ทรงผมยอดนิยมสไตล์เกาหลี
  *         imageUrls:
  *           type: array
@@ -68,25 +67,25 @@ router.use('/:id/reviews', reviewRouter);
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: วันที่สร้างทรงผม
+ *           description: The date the hairstyle was created
  */
 
 /**
  * @swagger
  * tags:
  *   - name: Hairstyles
- *     description: การจัดการข้อมูลทรงผม
+ *     description: Hairstyle management
  */
 
 /**
  * @swagger
  * /api/hairstyles:
  *   get:
- *     summary: ดึงรายการทรงผมทั้งหมด
+ *     summary: Get a list of all hairstyles
  *     tags: [Hairstyles]
  *     responses:
  *       200:
- *         description: ส่งคืนรายการทรงผมทั้งหมด
+ *         description: A list of hairstyles
  *         content:
  *           application/json:
  *             schema:
@@ -94,7 +93,7 @@ router.use('/:id/reviews', reviewRouter);
  *               items:
  *                 $ref: '#/components/schemas/Hairstyle'
  *   post:
- *     summary: เพิ่มทรงผมใหม่ (เฉพาะผู้ดูแลระบบ)
+ *     summary: Create a new hairstyle (Admin only)
  *     tags: [Hairstyles]
  *     security:
  *       - bearerAuth: []
@@ -106,22 +105,22 @@ router.use('/:id/reviews', reviewRouter);
  *             $ref: '#/components/schemas/Hairstyle'
  *     responses:
  *       201:
- *         description: เพิ่มทรงผมสำเร็จ
+ *         description: Hairstyle created successfully
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       403:
- *         description: ไม่มีสิทธิ์ (ไม่ใช่ผู้ดูแลระบบ)
+ *         description: Forbidden (not an admin)
  */
 router.route('/')
   .get(getHairstyles)
   .post(
     protect,
     admin,
-    [
-      check('name', 'จำเป็นต้องกรอกชื่อทรงผม').not().isEmpty(),
-      check('description', 'จำเป็นต้องกรอกรายละเอียด').not().isEmpty(),
-      check('imageUrls', 'imageUrls ต้องเป็นอาร์เรย์ที่มี URL อย่างน้อย 1 รายการ').isArray({ min: 1 }),
-      check('gender', 'ต้องระบุเพศ และต้องเป็น ชาย, หญิง หรือ Unisex').isIn(['ชาย', 'หญิง', 'Unisex']),
+    [ // Validation rules for creating a hairstyle
+      check('name', 'Name is required').not().isEmpty(),
+      check('description', 'Description is required').not().isEmpty(),
+      check('imageUrls', 'Image URLs must be an array with at least one URL').isArray({ min: 1 }),
+      check('gender', 'Gender is required and must be ชาย, หญิง, or Unisex').isIn(['ชาย', 'หญิง', 'Unisex']),
     ],
     validateRequest,
     createHairstyle
@@ -131,7 +130,7 @@ router.route('/')
  * @swagger
  * /api/hairstyles/{id}:
  *   get:
- *     summary: ดึงข้อมูลทรงผมจาก ID
+ *     summary: Get a single hairstyle by ID
  *     tags: [Hairstyles]
  *     parameters:
  *       - in: path
@@ -139,14 +138,14 @@ router.route('/')
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของทรงผม
+ *         description: The hairstyle ID
  *     responses:
  *       200:
- *         description: ข้อมูลของทรงผมที่ต้องการ
+ *         description: Detailed information about a hairstyle
  *       404:
- *         description: ไม่พบทรงผมที่ระบุ
+ *         description: Hairstyle not found
  *   put:
- *     summary: อัปเดตทรงผม (เฉพาะผู้ดูแลระบบ)
+ *     summary: Update a hairstyle (Admin only)
  *     tags: [Hairstyles]
  *     security:
  *       - bearerAuth: []
@@ -156,7 +155,7 @@ router.route('/')
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของทรงผม
+ *         description: The hairstyle ID
  *     requestBody:
  *       content:
  *         application/json:
@@ -164,11 +163,11 @@ router.route('/')
  *             $ref: '#/components/schemas/Hairstyle'
  *     responses:
  *       200:
- *         description: อัปเดตทรงผมสำเร็จ
+ *         description: Hairstyle updated successfully
  *       404:
- *         description: ไม่พบทรงผม
+ *         description: Hairstyle not found
  *   delete:
- *     summary: ลบทรงผม (เฉพาะผู้ดูแลระบบ)
+ *     summary: Delete a hairstyle (Admin only)
  *     tags: [Hairstyles]
  *     security:
  *       - bearerAuth: []
@@ -178,19 +177,19 @@ router.route('/')
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของทรงผม
+ *         description: The hairstyle ID
  *     responses:
  *       200:
- *         description: ลบทรงผมสำเร็จ
+ *         description: Hairstyle deleted successfully
  *       404:
- *         description: ไม่พบทรงผม
+ *         description: Hairstyle not found
  */
 router.route('/:id')
   .get(getHairstyleById)
   .put(
     protect,
     admin,
-    [
+    [ // Optional validation rules for updating
       check('name').optional().not().isEmpty(),
       check('description').optional().not().isEmpty(),
       check('imageUrls').optional().isArray({ min: 1 }),

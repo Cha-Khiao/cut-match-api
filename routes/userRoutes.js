@@ -20,6 +20,7 @@ const {
 const { protect } = require('../middleware/authMiddleware.js');
 const upload = require('../middleware/uploadMiddleware.js');
 
+// Middleware to handle validation results
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -41,37 +42,37 @@ const validateRequest = (req, res, next) => {
  *       properties:
  *         _id:
  *           type: string
- *           description: รหัสผู้ใช้ที่ระบบสร้างขึ้น
+ *           description: The auto-generated id of the user
  *         username:
  *           type: string
- *           description: ชื่อผู้ใช้
- *           example: สมชาย ใจดี
+ *           description: The user's name
+ *           example: John Doe
  *         email:
  *           type: string
  *           format: email
- *           description: อีเมลของผู้ใช้
- *           example: somchai@example.com
+ *           description: The user's email
+ *           example: john.doe@example.com
  *         password:
  *           type: string
  *           format: password
- *           description: รหัสผ่านของผู้ใช้
- *           example: รหัสผ่าน123
+ *           description: The user's password
+ *           example: password123
  *         role:
  *           type: string
- *           description: บทบาทของผู้ใช้ (user หรือ admin)
+ *           description: The user's role (user or admin)
  *           example: user
  *         profileImage:
  *           type: string
  *           format: binary
- *           description: รูปโปรไฟล์ของผู้ใช้ (ไม่จำเป็น)
+ *           description: The profile image of the user (optional)
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: วันที่สร้างบัญชี
+ *           description: The date the user was created
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: วันที่แก้ไขบัญชีล่าสุด
+ *           description: The date the user profile was last updated
  *     Favorite:
  *       type: object
  *       required:
@@ -80,36 +81,38 @@ const validateRequest = (req, res, next) => {
  *       properties:
  *         userId:
  *           type: string
- *           description: รหัสผู้ใช้ที่เพิ่มรายการโปรด
+ *           description: The ID of the user who is adding the favorite
+ *           example: 60d2b3f04f1a2d001fbc2e7d
  *         hairstyleId:
  *           type: string
- *           description: รหัสทรงผมที่เพิ่มในรายการโปรด
+ *           description: The ID of the hairstyle being added to favorites
+ *           example: 60d2b3f04f1a2d001fbc2e7e
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: วันที่เพิ่มรายการโปรด
+ *           description: The date when the favorite was added
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: วันที่อัปเดตรายการโปรด
+ *           description: The date when the favorite was last updated
  */
 
 /**
  * @swagger
  * tags:
  *   - name: Users
- *     description: การจัดการบัญชีผู้ใช้ และการเข้าสู่ระบบ
+ *     description: User authentication and management
  *   - name: Favorites
- *     description: การจัดการทรงผมที่ผู้ใช้ชื่นชอบ
+ *     description: Manage user favorites (hairstyles)
  *   - name: SavedLooks
- *     description: การจัดการลุคที่บันทึกไว้ (ภาพอัปโหลด)
+ *     description: Manage saved looks (uploaded images)
  */
 
 /**
  * @swagger
  * /api/users/register:
  *   post:
- *     summary: สมัครสมาชิกผู้ใช้ใหม่
+ *     summary: Register a new user
  *     tags: [Users]
  *     requestBody:
  *       required: true
@@ -119,14 +122,14 @@ const validateRequest = (req, res, next) => {
  *             $ref: '#/components/schemas/User'
  *     responses:
  *       201:
- *         description: ลงทะเบียนผู้ใช้เรียบร้อยแล้ว
+ *         description: User registered successfully
  *       400:
- *         description: คำขอไม่ถูกต้อง (อีเมลนี้อาจมีอยู่แล้ว)
+ *         description: Bad request (e.g., user already exists)
  */
 router.post('/register', [
-    check('username', 'กรุณากรอกชื่อผู้ใช้').not().isEmpty(),
-    check('email', 'กรุณากรอกอีเมลให้ถูกต้อง').isEmail(),
-    check('password', 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร').isLength({ min: 6 })
+    check('username', 'Username is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Password must be 6 or more characters').isLength({ min: 6 })
   ],
   validateRequest,
   registerUser
@@ -136,7 +139,7 @@ router.post('/register', [
  * @swagger
  * /api/users/login:
  *   post:
- *     summary: เข้าสู่ระบบผู้ใช้
+ *     summary: Authenticate a user and get a token
  *     tags: [Users]
  *     requestBody:
  *       required: true
@@ -151,20 +154,20 @@ router.post('/register', [
  *               email:
  *                 type: string
  *                 format: email
- *                 example: somchai@example.com
+ *                 example: john.doe@example.com
  *               password:
  *                 type: string
  *                 format: password
- *                 example: รหัสผ่าน123
+ *                 example: password123
  *     responses:
  *       200:
- *         description: เข้าสู่ระบบสำเร็จ
+ *         description: Login successful
  *       401:
- *         description: อีเมลหรือรหัสผ่านไม่ถูกต้อง
+ *         description: Invalid email or password
  */
 router.post('/login', [
-    check('email', 'กรุณากรอกอีเมลให้ถูกต้อง').isEmail(),
-    check('password', 'กรุณากรอกรหัสผ่าน').exists()
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Password is required').exists()
   ],
   validateRequest,
   loginUser
@@ -174,17 +177,17 @@ router.post('/login', [
  * @swagger
  * /api/users/profile:
  *   get:
- *     summary: ดึงข้อมูลโปรไฟล์ของผู้ใช้ที่เข้าสู่ระบบ
+ *     summary: Get the logged-in user's profile
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: ข้อมูลโปรไฟล์ของผู้ใช้
+ *         description: User profile data
  *       401:
- *         description: ยังไม่ได้เข้าสู่ระบบ
+ *         description: Unauthorized
  *   put:
- *     summary: แก้ไขข้อมูลโปรไฟล์ (รวมถึงอัปโหลดรูป)
+ *     summary: Update the logged-in user's profile (with optional image upload)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -205,21 +208,21 @@ router.post('/login', [
  *                 format: binary
  *     responses:
  *       200:
- *         description: แก้ไขโปรไฟล์เรียบร้อยแล้ว
+ *         description: Profile updated successfully
  *       400:
- *         description: รูปแบบไฟล์ไม่ถูกต้อง
+ *         description: Invalid file type
  *       401:
- *         description: ยังไม่ได้เข้าสู่ระบบ
+ *         description: Unauthorized
  *   delete:
- *     summary: ลบบัญชีผู้ใช้
+ *     summary: Delete the logged-in user's account
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: ลบบัญชีเรียบร้อยแล้ว
+ *         description: User account deleted successfully
  *       401:
- *         description: ยังไม่ได้เข้าสู่ระบบ
+ *         description: Unauthorized
  */
 router.route('/profile')
   .get(protect, getUserProfile)
@@ -230,17 +233,17 @@ router.route('/profile')
  * @swagger
  * /api/users/favorites:
  *   get:
- *     summary: ดึงรายการทรงผมที่ชื่นชอบของผู้ใช้
+ *     summary: Get a list of the user's favorite hairstyles
  *     tags: [Favorites]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: รายการทรงผมที่ชื่นชอบ
+ *         description: List of favorite hairstyles for the user
  *       401:
- *         description: ยังไม่ได้เข้าสู่ระบบ
+ *         description: Unauthorized
  *   post:
- *     summary: เพิ่มทรงผมในรายการโปรด
+ *     summary: Add a hairstyle to the user's favorites
  *     tags: [Favorites]
  *     security:
  *       - bearerAuth: []
@@ -252,21 +255,18 @@ router.route('/profile')
  *             $ref: '#/components/schemas/Favorite'
  *     responses:
  *       201:
- *         description: เพิ่มในรายการโปรดสำเร็จ
+ *         description: Favorite added successfully
  *       400:
- *         description: คำขอไม่ถูกต้อง (เช่น เพิ่มซ้ำ)
+ *         description: Bad request (e.g., already added to favorites)
  *       401:
- *         description: ยังไม่ได้เข้าสู่ระบบ
+ *         description: Unauthorized
  */
-router.route('/favorites')
-  .get(protect, getFavoriteHairstyles)
-  .post(protect, addFavoriteHairstyle);
 
 /**
  * @swagger
  * /api/users/favorites/{id}:
  *   delete:
- *     summary: ลบทรงผมจากรายการโปรด
+ *     summary: Remove a hairstyle from the user's favorites
  *     tags: [Favorites]
  *     security:
  *       - bearerAuth: []
@@ -276,15 +276,19 @@ router.route('/favorites')
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของรายการโปรดที่ต้องการลบ
+ *         description: The ID of the favorite hairstyle to be removed
  *     responses:
  *       200:
- *         description: ลบรายการโปรดสำเร็จ
+ *         description: Favorite removed successfully
  *       404:
- *         description: ไม่พบรายการโปรด
+ *         description: Favorite not found
  *       401:
- *         description: ยังไม่ได้เข้าสู่ระบบ
+ *         description: Unauthorized
  */
+router.route('/favorites')
+  .get(protect, getFavoriteHairstyles)
+  .post(protect, addFavoriteHairstyle);
+
 router.route('/favorites/:id')
   .delete(protect, removeFavoriteHairstyle);
 
@@ -292,15 +296,42 @@ router.route('/favorites/:id')
  * @swagger
  * /api/users/saved-looks:
  *   get:
- *     summary: ดูลุคที่บันทึกไว้ (ภาพ)
+ *     summary: Get a list of saved looks (images)
  *     tags: [SavedLooks]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: ลิสต์ของลุคที่บันทึกไว้
+ *         description: A list of saved looks (images)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The ID of the saved look
+ *                     example: 60d2b3f04f1a2d001fbc2e7d
+ *                   imageUrl:
+ *                     type: string
+ *                     description: The URL of the saved look image
+ *                     example: "https://example.com/image.png"
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date the saved look was created
+ *                     example: "2022-05-18T09:30:00Z"
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date the saved look was last updated
+ *                     example: "2022-05-19T14:25:00Z"
+ *       401:
+ *         description: Unauthorized
  *   post:
- *     summary: อัปโหลดภาพลุคที่บันทึกไว้
+ *     summary: Add a saved look (image upload)
  *     tags: [SavedLooks]
  *     security:
  *       - bearerAuth: []
@@ -314,12 +345,18 @@ router.route('/favorites/:id')
  *               savedLookImage:
  *                 type: string
  *                 format: binary
- *                 description: รูปลุคที่ผู้ใช้อัปโหลด
+ *                 description: The saved look image uploaded by the user
+ *             required:
+ *               - savedLookImage
  *     responses:
  *       201:
- *         description: เพิ่มลุคเรียบร้อยแล้ว
+ *         description: Saved look added successfully
+ *       400:
+ *         description: Invalid file type
+ *       401:
+ *         description: Unauthorized
  *   delete:
- *     summary: ลบลุคที่บันทึกไว้
+ *     summary: Delete a saved look (image)
  *     tags: [SavedLooks]
  *     security:
  *       - bearerAuth: []
@@ -332,20 +369,26 @@ router.route('/favorites/:id')
  *             properties:
  *               savedLookId:
  *                 type: string
+ *                 description: The ID of the saved look to be deleted
+ *                 example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: ลบลุคสำเร็จ
+ *         description: Saved look deleted successfully
+ *       404:
+ *         description: Saved look not found
+ *       401:
+ *         description: Unauthorized
  */
 router.route('/saved-looks')
-  .get(protect, getSavedLooks)
-  .post(protect, upload.single('savedLookImage'), addSavedLook)
-  .delete(protect, deleteSavedLook);
+    .get(protect, getSavedLooks)
+    .post(protect, upload.single('savedLookImage'), addSavedLook)
+    .delete(protect, deleteSavedLook);
 
 /**
  * @swagger
  * /api/users/public/{id}:
  *   get:
- *     summary: ดูโปรไฟล์สาธารณะของผู้ใช้
+ *     summary: Get a public profile of a user
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -353,15 +396,15 @@ router.route('/saved-looks')
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของผู้ใช้ที่ต้องการดูโปรไฟล์
+ *         description: The ID of the user whose public profile is to be fetched
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: แสดงโปรไฟล์สาธารณะของผู้ใช้สำเร็จ
+ *         description: Successfully fetched the public profile of the user
  *       404:
- *         description: ไม่พบผู้ใช้
+ *         description: User not found
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  */
 router.get('/public/:id', getUserPublicProfile);
 
@@ -369,7 +412,7 @@ router.get('/public/:id', getUserPublicProfile);
  * @swagger
  * /api/users/{id}/follow:
  *   post:
- *     summary: ติดตามผู้ใช้
+ *     summary: Follow a user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -379,20 +422,20 @@ router.get('/public/:id', getUserPublicProfile);
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของผู้ใช้ที่ต้องการติดตาม
+ *         description: The ID of the user to follow
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: ติดตามผู้ใช้สำเร็จ
+ *         description: Successfully followed the user
  *       400:
- *         description: คำขอไม่ถูกต้อง (อาจติดตามผู้ใช้นั้นอยู่แล้ว)
+ *         description: Bad request (e.g., already following the user)
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบผู้ใช้
+ *         description: User not found
  * 
  *   delete:
- *     summary: เลิกติดตามผู้ใช้
+ *     summary: Unfollow a user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -402,15 +445,15 @@ router.get('/public/:id', getUserPublicProfile);
  *         required: true
  *         schema:
  *           type: string
- *         description: รหัสของผู้ใช้ที่ต้องการเลิกติดตาม
+ *         description: The ID of the user to unfollow
  *         example: 60d2b3f04f1a2d001fbc2e7d
  *     responses:
  *       200:
- *         description: เลิกติดตามผู้ใช้สำเร็จ
+ *         description: Successfully unfollowed the user
  *       401:
- *         description: ไม่ได้รับอนุญาต
+ *         description: Unauthorized
  *       404:
- *         description: ไม่พบผู้ใช้
+ *         description: User not found
  */
 router.route('/:id/follow')
   .post(protect, followUser)
