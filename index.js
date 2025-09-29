@@ -11,6 +11,7 @@ const hairstyleRoutes = require('./routes/hairstyleRoutes.js');
 const postRoutes = require('./routes/postRoutes.js');
 const commentRoutes = require('./routes/commentRoutes.js');
 const reviewRoutes = require('./routes/reviewRoutes.js');
+const salonRoutes = require('./routes/salonRoutes.js');
 
 // Import Middleware
 const { errorHandler } = require('./middleware/errorMiddleware.js');
@@ -119,6 +120,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/hairstyles', hairstyleRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/salons', salonRoutes);
 // reviewRoutes ถูกเรียกใช้ข้างใน hairstyleRoutes แล้ว
 
 // --- Centralized Error Handler ---
