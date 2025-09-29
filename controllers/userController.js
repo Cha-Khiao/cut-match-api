@@ -2,6 +2,7 @@ const User = require('../models/User.js');
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const Post = require('../models/Post.js');
+const Notification = require('../models/Notification.js');
 
 // ฟังก์ชันสร้าง Token
 const generateToken = (id) => {

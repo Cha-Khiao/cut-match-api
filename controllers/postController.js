@@ -82,23 +82,23 @@ const updatePost = asyncHandler(async (req, res) => {
 const likePost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (post) {
-    if (post.likes.includes(req.user._id)) {
+    const isAlreadyLiked = post.likes.includes(req.user._id);
+
+    if (isAlreadyLiked) {
       post.likes.pull(req.user._id);
     } else {
       post.likes.push(req.user._id);
+      // --- ✨ สร้าง Notification ✨ ---
+      if (!post.author.equals(req.user._id)) {
+        await Notification.create({
+          recipient: post.author,
+          sender: req.user._id,
+          type: 'like',
+          post: post._id,
+        });
+      }
     }
     await post.save();
-
-    // --- ✨ สร้าง Notification ✨ ---
-    // สร้างก็ต่อเมื่อไม่ใช่เจ้าของโพสต์ไลค์โพสต์ตัวเอง
-    if (!post.author.equals(req.user._id)) {
-        await Notification.create({
-            recipient: post.author,
-            sender: req.user._id,
-            type: 'like',
-            post: post._id,
-        });
-    }
 
     // --- ✨ แก้ไขส่วนนี้ ✨ ---
     const updatedPost = await Post.findById(post._id)
