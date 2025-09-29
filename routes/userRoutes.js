@@ -16,6 +16,7 @@ const {
   getUserPublicProfile,
   followUser,
   unfollowUser,
+  searchUsers,
 } = require('../controllers/userController.js');
 const { protect } = require('../middleware/authMiddleware.js');
 const upload = require('../middleware/uploadMiddleware.js');
@@ -408,6 +409,7 @@ router.route('/saved-looks')
  */
 router.get('/public/:id', getUserPublicProfile);
 
+router.route('/search').get(protect, searchUsers);
 /**
  * @swagger
  * /api/users/{id}/follow:
