@@ -78,6 +78,12 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   if (user) {
       user.username = req.body.username || user.username;
       user.email = req.body.email || user.email;
+      if (req.body.salonName !== undefined) {
+        user.salonName = req.body.salonName;
+      }
+      if (req.body.salonMapUrl !== undefined) {
+        user.salonMapUrl = req.body.salonMapUrl;
+      }
       if (req.file) {
         user.profileImageUrl = req.file.path;
       }
@@ -92,6 +98,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
          role: updatedUser.role,
          profileImageUrl: updatedUser.profileImageUrl,
          token: generateToken(updatedUser._id),
+         salonName: updatedUser.salonName,
+         salonMapUrl: updatedUser.salonMapUrl,
       });
   } else {
       res.status(404);
@@ -281,6 +289,8 @@ const getUserPublicProfile = asyncHandler(async (req, res) => {
             followingCount: user.following.length,
             followerCount: user.followers.length,
             postCount: postCount,
+            salonName: user.salonName,       
+            salonMapUrl: user.salonMapUrl,
         });
     } else {
         res.status(404);
