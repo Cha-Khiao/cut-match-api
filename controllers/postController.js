@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Post = require('../models/Post.js');
 const User = require('../models/User.js');
 const Comment = require('../models/Comment.js');
+const Notification = require('../models/Notification.js');
 
 // @desc    Create a new post
 // @route   POST /api/posts
@@ -87,6 +88,17 @@ const likePost = asyncHandler(async (req, res) => {
       post.likes.push(req.user._id);
     }
     await post.save();
+
+    // --- ✨ สร้าง Notification ✨ ---
+    // สร้างก็ต่อเมื่อไม่ใช่เจ้าของโพสต์ไลค์โพสต์ตัวเอง
+    if (!post.author.equals(req.user._id)) {
+        await Notification.create({
+            recipient: post.author,
+            sender: req.user._id,
+            type: 'like',
+            post: post._id,
+        });
+    }
 
     // --- ✨ แก้ไขส่วนนี้ ✨ ---
     const updatedPost = await Post.findById(post._id)

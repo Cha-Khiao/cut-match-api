@@ -18,6 +18,16 @@ const createComment = asyncHandler(async (req, res) => {
     await post.save();
     // ------------------------------------------
 
+    // --- ✨ สร้าง Notification ✨ ---
+    if (!post.author.equals(req.user._id)) {
+        await Notification.create({
+            recipient: post.author,
+            sender: req.user._id,
+            type: 'comment',
+            post: postId,
+        });
+    }
+
     const populatedComment = await Comment.findById(createdComment._id).populate('author', 'username profileImageUrl');
     res.status(201).json(populatedComment);
   } else {
