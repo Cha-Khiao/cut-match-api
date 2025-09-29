@@ -7,7 +7,14 @@ const getNotifications = asyncHandler(async (req, res) => {
   const notifications = await Notification.find({ recipient: req.user._id })
     .sort({ createdAt: -1 })
     .populate('sender', 'username profileImageUrl')
-    .populate('post', 'imageUrl'); // ดึงรูปแรกของโพสต์มาแสดง
+    // --- ✨ แก้ไขส่วนนี้ให้ populate ข้อมูล Post ทั้งหมด ✨ ---
+    .populate({
+      path: 'post',
+      populate: {
+        path: 'author',
+        select: 'username profileImageUrl'
+      }
+    });
   
   res.json(notifications);
 });
