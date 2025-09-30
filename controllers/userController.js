@@ -5,29 +5,31 @@ const Post = require('../models/Post.js');
 const Notification = require('../models/Notification.js');
 
 // ฟังก์ชันสร้าง Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+const createAuthResponse = (user) => {
+  return {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+    profileImageUrl: user.profileImageUrl,
+    following: user.following,
+    salonName: user.salonName,
+    salonMapUrl: user.salonMapUrl,
+    token: jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' }),
+  };
 };
 
-// @desc    Register a new user
-// @route   POST /api/users/register
+/// @desc    Register a new user
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400);
-    throw new Error('อีเมลนี้มีผู้ใช้งานแล้ว');
+    throw new Error('User with this email already exists');
   }
   const user = await User.create({ username, email, password });
   if (user) {
-    res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      profileImageUrl: user.profileImageUrl,
-      token: generateToken(user._id),
-    });
+    res.status(201).json(createAuthResponse(user)); // <-- ✨ 2. ใช้ "แม่พิมพ์"
   } else {
     res.status(400);
     throw new Error('Invalid user data');
@@ -35,22 +37,14 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Auth user & get token
-// @route   POST /api/users/login
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
-    res.json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      profileImageUrl: user.profileImageUrl,
-      token: generateToken(user._id),
-    });
+    res.json(createAuthResponse(user)); // <-- ✨ 2. ใช้ "แม่พิมพ์"
   } else {
     res.status(401);
-    throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+    throw new Error('Invalid email or password');
   }
 });
 
@@ -73,38 +67,24 @@ const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update user profile
-// @route   PUT /api/users/profile
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
-      user.username = req.body.username || user.username;
-      user.email = req.body.email || user.email;
-      if (req.body.salonName !== undefined) {
-        user.salonName = req.body.salonName;
-      }
-      if (req.body.salonMapUrl !== undefined) {
-        user.salonMapUrl = req.body.salonMapUrl;
-      }
-      if (req.file) {
-        user.profileImageUrl = req.file.path;
-      }
-      if (req.body.password) {
-          user.password = req.body.password;
-      }
-      const updatedUser = await user.save();
-      res.json({
-          _id: updatedUser._id,
-         username: updatedUser.username,
-         email: updatedUser.email,
-         role: updatedUser.role,
-         profileImageUrl: updatedUser.profileImageUrl,
-         token: generateToken(updatedUser._id),
-         salonName: updatedUser.salonName,
-         salonMapUrl: updatedUser.salonMapUrl,
-      });
+    user.username = req.body.username || user.username;
+    user.email = req.body.email || user.email;
+    if (req.body.salonName !== undefined) user.salonName = req.body.salonName;
+    if (req.body.salonMapUrl !== undefined) user.salonMapUrl = req.body.salonMapUrl;
+    if (req.file) {
+      user.profileImageUrl = req.file.path;
+    }
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+    const updatedUser = await user.save();
+    res.json(createAuthResponse(updatedUser)); // <-- ✨ 2. ใช้ "แม่พิมพ์"
   } else {
-      res.status(404);
-      throw new Error('ไม่พบผู้ใช้งาน');
+    res.status(404);
+    throw new Error('User not found');
   }
 });
 
