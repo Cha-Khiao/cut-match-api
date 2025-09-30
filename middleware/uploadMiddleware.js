@@ -5,9 +5,8 @@ const cloudinary = require('../config/cloudinary');
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'cut-match-profiles', // ชื่อโฟลเดอร์ใน Cloudinary
+    folder: 'cut-match-profiles',
     allowed_formats: ['jpg', 'png', 'jpeg'],
-    // public_id: (req, file) => 'some_unique_name', // (optional)
   },
 });
 
