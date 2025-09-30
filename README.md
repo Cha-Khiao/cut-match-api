@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/images/favicon.png" alt="Cut Match Logo" width="120" />
+  <img src="public/images/Node.png" alt="Cut Match Logo" width="120" />
   <h1>Cut Match API ✂️</h1>
   <p>
     <strong>Backend API สำหรับแอปพลิเคชันค้นหา, ลอง, และแบ่งปันสไตล์ทรงผม</strong>
@@ -13,6 +13,10 @@
     <img src="https://img.shields.io/badge/MongoDB-blue?style=for-the-badge&logo=mongodb" alt="MongoDB">
   </p>
 </div>
+
+---
+
+**BASE URL API:** **[https://cut-match-api.onrender.com/api](https://cut-match-api.onrender.com)**
 
 ---
 
