@@ -102,8 +102,8 @@ const swaggerOptions = {
         description: 'เอกสาร API สำหรับแอปพลิเคชัน Cut Match',
       },
       servers: [
-        { url: 'https://cut-match-api.onrender.com', description: 'Production Server' },
-        { url: `http://localhost:${PORT}`, description: 'Development Server' }
+        { url: 'https://cut-match-api.onrender.com', description: 'เซิร์ฟเวอร์ใช้งานจริง (Production)' },
+        { url: `http://localhost:${PORT}`, description: 'เซิร์ฟเวอร์สำหรับพัฒนา (Development)' }
       ],
       components: {
         securitySchemes: {
@@ -122,7 +122,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
     "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js",
     "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js"
   ],
-  customfavIcon: "/images/favicon.png"
+  customfavIcon: "/images/Node.png"
 }));
 
 
