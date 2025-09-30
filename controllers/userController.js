@@ -93,6 +93,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+
 // @desc    Delete user profile
 const deleteUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
