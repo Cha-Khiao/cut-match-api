@@ -12,13 +12,10 @@ const createPost = asyncHandler(async (req, res) => {
   const newPostData = {
     author: req.user._id,
     text: text,
-    imageUrls: [], // เริ่มต้นด้วย Array ว่าง
+    imageUrls: [],
   };
 
-  // --- ✨ แก้ไข Logic การรับรูปภาพ ✨ ---
-  // multer.array จะส่ง req.files มาเป็น Array
   if (req.files && req.files.length > 0) {
-    // วนลูปเพื่อดึง URL ของทุกไฟล์ที่อัปโหลด
     newPostData.imageUrls = req.files.map(file => file.path);
   }
 
@@ -66,7 +63,6 @@ const updatePost = asyncHandler(async (req, res) => {
     post.linkedHairstyle = linkedHairstyle !== undefined ? linkedHairstyle : post.linkedHairstyle;
     await post.save();
 
-    // --- ✨ แก้ไขส่วนนี้ ✨ ---
     const updatedPost = await Post.findById(post._id)
         .populate('author', 'username profileImageUrl')
         .populate('linkedHairstyle', 'name imageUrls');
@@ -88,7 +84,6 @@ const likePost = asyncHandler(async (req, res) => {
       post.likes.pull(req.user._id);
     } else {
       post.likes.push(req.user._id);
-      // --- ✨ สร้าง Notification ✨ ---
       if (!post.author.equals(req.user._id)) {
         await Notification.create({
           recipient: post.author,
@@ -100,7 +95,6 @@ const likePost = asyncHandler(async (req, res) => {
     }
     await post.save();
 
-    // --- ✨ แก้ไขส่วนนี้ ✨ ---
     const updatedPost = await Post.findById(post._id)
       .populate('author', 'username profileImageUrl')
       .populate('linkedHairstyle', 'name imageUrls');

@@ -17,11 +17,9 @@ const createHairstyle = asyncHandler(async (req, res) => {
 // @desc    Get all hairstyles OR filter by search/tags/gender etc.
 // @route   GET /api/hairstyles
 const getHairstyles = asyncHandler(async (req, res) => {
-  // รับค่า query parameters จาก URL
   const { tags, suitableFaceShapes, gender, search } = req.query;
   let filter = {};
 
-  // สร้าง object สำหรับ query ใน MongoDB
   if (tags) {
     filter.tags = { $in: tags.split(',') };
   }
@@ -32,11 +30,9 @@ const getHairstyles = asyncHandler(async (req, res) => {
     filter.gender = gender;
   }
   if (search) {
-    // ใช้ Regular Expression สำหรับการค้นหาแบบ case-insensitive (ไม่สนตัวพิมพ์เล็ก/ใหญ่)
     filter.name = { $regex: search, $options: 'i' };
   }
 
-  // ส่ง filter object เข้าไปใน find()
   const hairstyles = await Hairstyle.find(filter);
   res.json(hairstyles);
 });

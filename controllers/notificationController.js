@@ -7,7 +7,6 @@ const getNotifications = asyncHandler(async (req, res) => {
   const notifications = await Notification.find({ recipient: req.user._id })
     .sort({ createdAt: -1 })
     .populate('sender', 'username profileImageUrl')
-    // --- ✨ แก้ไขส่วนนี้ให้ populate ข้อมูล Post ทั้งหมด ✨ ---
     .populate({
       path: 'post',
       populate: {
@@ -32,7 +31,6 @@ const deleteNotification = asyncHandler(async (req, res) => {
     const notification = await Notification.findById(req.params.id);
 
     if (notification) {
-        // ตรวจสอบให้แน่ใจว่าเป็นเจ้าของการแจ้งเตือนจริงๆ
         if (!notification.recipient.equals(req.user._id)) {
             res.status(401);
             throw new Error('Not authorized to delete this notification');

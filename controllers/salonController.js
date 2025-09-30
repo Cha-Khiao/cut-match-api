@@ -18,12 +18,11 @@ const findNearbySalons = asyncHandler(async (req, res) => {
            type: "Point" ,
            coordinates: [ parseFloat(lng), parseFloat(lat) ]
         },
-        $maxDistance: 20000 // เพิ่มรัศมีเป็น 20 km
+        $maxDistance: 20000
       }
     }
   };
 
-  // ถ้ามีคำค้นหา ให้เพิ่มเงื่อนไขการค้นหาตามชื่อ
   if (search) {
     query.name = { $regex: search, $options: 'i' };
   }

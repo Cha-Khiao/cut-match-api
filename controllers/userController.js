@@ -29,7 +29,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const user = await User.create({ username, email, password });
   if (user) {
-    // --- ✨ 2. ใช้ Helper Function ✨ ---
     res.status(201).json(createAuthResponse(user));
   } else {
     res.status(400);
@@ -42,7 +41,6 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
-    // --- ✨ 3. ใช้ Helper Function ✨ ---
     res.json(createAuthResponse(user));
   } else {
     res.status(401);
@@ -85,7 +83,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
-    // --- ✨ 4. ใช้ Helper Function ✨ ---
     res.json(createAuthResponse(updatedUser));
   } else {
     res.status(404);
