@@ -25,7 +25,7 @@ const { protect, admin } = require('../middleware/authMiddleware.js');
  *           description: รหัสร้าน (สร้างอัตโนมัติ)
  *         name:
  *           type: string
- *           description: ชื่อร้านเสริมสวย
+ *           description: ชื่อร้านตัดผม
  *           example: ร้านสวยงาม
  *         address:
  *           type: string
@@ -57,20 +57,20 @@ const { protect, admin } = require('../middleware/authMiddleware.js');
  * @swagger
  * tags:
  *   - name: Salons
- *     description: การจัดการข้อมูลร้านเสริมสวย
+ *     description: การจัดการข้อมูลร้านตัดผม
  */
 
 /**
  * @swagger
  * /api/salons:
  *   get:
- *     summary: ดูรายการร้านเสริมสวยทั้งหมด
+ *     summary: ดูรายการร้านตัดผมทั้งหมด
  *     tags: [Salons]
  *     responses:
  *       200:
- *         description: รายการร้านเสริมสวยทั้งหมด
+ *         description: รายการร้านตัดผมทั้งหมด
  *   post:
- *     summary: เพิ่มร้านเสริมสวยใหม่ (เฉพาะแอดมิน)
+ *     summary: เพิ่มร้านตัดผมใหม่ (เฉพาะแอดมิน)
  *     tags: [Salons]
  *     security:
  *       - bearerAuth: []
@@ -96,7 +96,7 @@ router.route('/')
  * @swagger
  * /api/salons/nearby:
  *   get:
- *     summary: ค้นหาร้านเสริมสวยใกล้เคียงตามพิกัด
+ *     summary: ค้นหาร้านตัดผมใกล้เคียงตามพิกัด
  *     tags: [Salons]
  *     parameters:
  *       - in: query
@@ -130,7 +130,7 @@ router.route('/nearby').get(findNearbySalons);
  * @swagger
  * /api/salons/{id}:
  *   put:
- *     summary: แก้ไขข้อมูลร้านเสริมสวย (เฉพาะแอดมิน)
+ *     summary: แก้ไขข้อมูลร้านตัดผม (เฉพาะแอดมิน)
  *     tags: [Salons]
  *     security:
  *       - bearerAuth: []
@@ -157,7 +157,7 @@ router.route('/nearby').get(findNearbySalons);
  *       404:
  *         description: ไม่พบร้าน
  *   delete:
- *     summary: ลบร้านเสริมสวย (เฉพาะแอดมิน)
+ *     summary: ลบร้านตัดผม (เฉพาะแอดมิน)
  *     tags: [Salons]
  *     security:
  *       - bearerAuth: []
