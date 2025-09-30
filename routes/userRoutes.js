@@ -21,7 +21,6 @@ const {
 const { protect } = require('../middleware/authMiddleware.js');
 const upload = require('../middleware/uploadMiddleware.js');
 
-// Middleware to handle validation results
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -52,7 +51,10 @@ const validateRequest = (req, res, next) => {
  * schemas:
  * UserInput:
  * type: object
- * required: [username, email, password]
+ * required:
+ * - username
+ * - email
+ * - password
  * properties:
  * username:
  * type: string
@@ -67,7 +69,9 @@ const validateRequest = (req, res, next) => {
  * example: "password123"
  * LoginInput:
  * type: object
- * required: [email, password]
+ * required:
+ * - email
+ * - password
  * properties:
  * email:
  * type: string
@@ -79,7 +83,8 @@ const validateRequest = (req, res, next) => {
  * example: "password123"
  * AddFavoriteInput:
  * type: object
- * required: [hairstyleId]
+ * required:
+ * - hairstyleId
  * properties:
  * hairstyleId:
  * type: string
@@ -87,7 +92,8 @@ const validateRequest = (req, res, next) => {
  * example: "60d2b3f04f1a2d001fbc2e7e"
  * DeleteSavedLookInput:
  * type: object
- * required: [imageUrl]
+ * required:
+ * - imageUrl
  * properties:
  * imageUrl:
  * type: string
@@ -97,7 +103,7 @@ const validateRequest = (req, res, next) => {
 
 
 // =================================================================
-// ✨ AUTHENTICATION ROUTES (การยืนยันตัวตน)
+// ✨ AUTHENTICATION ROUTES
 // =================================================================
 
 /**
@@ -113,9 +119,9 @@ const validateRequest = (req, res, next) => {
  * schema:
  * $ref: '#/components/schemas/UserInput'
  * responses:
- * 201:
+ * '201':
  * description: สมัครสมาชิกสำเร็จ
- * 400:
+ * '400':
  * description: ข้อมูลไม่ถูกต้อง หรือมีอีเมลนี้ในระบบแล้ว
  */
 router.post('/register', [
@@ -140,9 +146,9 @@ router.post('/register', [
  * schema:
  * $ref: '#/components/schemas/LoginInput'
  * responses:
- * 200:
+ * '200':
  * description: เข้าสู่ระบบสำเร็จ
- * 401:
+ * '401':
  * description: อีเมลหรือรหัสผ่านไม่ถูกต้อง
  */
 router.post('/login', [
@@ -155,7 +161,7 @@ router.post('/login', [
 
 
 // =================================================================
-// ✨ PROFILE ROUTES (โปรไฟล์)
+// ✨ PROFILE ROUTES
 // =================================================================
 
 /**
@@ -164,35 +170,51 @@ router.post('/login', [
  * get:
  * summary: ดูข้อมูลโปรไฟล์ของตัวเอง (ที่ล็อกอินอยู่)
  * tags: [Users]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * responses:
- * 200: { description: "ข้อมูลโปรไฟล์" }
- * 401: { description: "ไม่ได้รับอนุญาต" }
+ * '200':
+ * description: "ข้อมูลโปรไฟล์"
+ * '401':
+ * description: "ไม่ได้รับอนุญาต"
  * put:
  * summary: อัปเดตข้อมูลโปรไฟล์ของตัวเอง
  * tags: [Users]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * requestBody:
  * content:
  * multipart/form-data:
  * schema:
  * type: object
  * properties:
- * username: { type: string }
- * password: { type: string, format: password }
- * profileImage: { type: string, format: binary }
- * salonName: { type: string }
- * salonMapUrl: { type: string }
+ * username:
+ * type: string
+ * password:
+ * type: string
+ * format: password
+ * profileImage:
+ * type: string
+ * format: binary
+ * salonName:
+ * type: string
+ * salonMapUrl:
+ * type: string
  * responses:
- * 200: { description: "อัปเดตสำเร็จ" }
- * 401: { description: "ไม่ได้รับอนุญาต" }
+ * '200':
+ * description: "อัปเดตสำเร็จ"
+ * '401':
+ * description: "ไม่ได้รับอนุญาต"
  * delete:
  * summary: ลบบัญชีของตัวเอง
  * tags: [Users]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * responses:
- * 200: { description: "ลบบัญชีสำเร็จ" }
- * 401: { description: "ไม่ได้รับอนุญาต" }
+ * '200':
+ * description: "ลบบัญชีสำเร็จ"
+ * '401':
+ * description: "ไม่ได้รับอนุญาต"
  */
 router.route('/profile')
   .get(protect, getUserProfile)
@@ -209,16 +231,19 @@ router.route('/profile')
  * - in: path
  * name: id
  * required: true
- * schema: { type: string }
+ * schema:
+ * type: string
  * responses:
- * 200: { description: "ข้อมูลโปรไฟล์สาธารณะ" }
- * 404: { description: "ไม่พบผู้ใช้" }
+ * '200':
+ * description: "ข้อมูลโปรไฟล์สาธารณะ"
+ * '404':
+ * description: "ไม่พบผู้ใช้"
  */
-router.get('/public/:id', getUserPublicProfile);
+router.get('/public/:id', protect, getUserPublicProfile);
 
 
 // =================================================================
-// ✨ SOCIAL & DISCOVERY ROUTES (โซเชียลและการค้นหา)
+// ✨ SOCIAL & DISCOVERY ROUTES
 // =================================================================
 
 /**
@@ -227,14 +252,16 @@ router.get('/public/:id', getUserPublicProfile);
  * get:
  * summary: ค้นหาผู้ใช้ด้วยชื่อ
  * tags: [Social]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * parameters:
  * - in: query
  * name: q
- * schema: { type: string }
+ * schema:
+ * type: string
  * description: คำค้นหาสำหรับ username
  * responses:
- * 200:
+ * '200':
  * description: รายชื่อผู้ใช้ที่ค้นหาเจอ
  */
 router.route('/search').get(protect, searchUsers);
@@ -245,27 +272,33 @@ router.route('/search').get(protect, searchUsers);
  * post:
  * summary: ติดตามผู้ใช้
  * tags: [Social]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * parameters:
  * - in: path
  * name: id
  * required: true
- * schema: { type: string }
+ * schema:
+ * type: string
  * description: ID ของผู้ใช้ที่ต้องการติดตาม
  * responses:
- * 200: { description: "ติดตามสำเร็จ" }
+ * '200':
+ * description: "ติดตามสำเร็จ"
  * delete:
  * summary: เลิกติดตามผู้ใช้
  * tags: [Social]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * parameters:
  * - in: path
  * name: id
  * required: true
- * schema: { type: string }
+ * schema:
+ * type: string
  * description: ID ของผู้ใช้ที่ต้องการเลิกติดตาม
  * responses:
- * 200: { description: "เลิกติดตามสำเร็จ" }
+ * '200':
+ * description: "เลิกติดตามสำเร็จ"
  */
 router.route('/:id/follow')
   .post(protect, followUser)
@@ -273,7 +306,7 @@ router.route('/:id/follow')
 
 
 // =================================================================
-// ✨ USER CONTENT ROUTES (เนื้อหาของผู้ใช้)
+// ✨ USER CONTENT ROUTES
 // =================================================================
 
 /**
@@ -282,13 +315,16 @@ router.route('/:id/follow')
  * get:
  * summary: ดูรายการทรงผมโปรดทั้งหมด
  * tags: [User Content]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * responses:
- * 200: { description: "รายการทรงผมโปรด" }
+ * '200':
+ * description: "รายการทรงผมโปรด"
  * post:
  * summary: เพิ่มทรงผมในรายการโปรด
  * tags: [User Content]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * requestBody:
  * required: true
  * content:
@@ -296,7 +332,8 @@ router.route('/:id/follow')
  * schema:
  * $ref: '#/components/schemas/AddFavoriteInput'
  * responses:
- * 200: { description: "เพิ่มสำเร็จ" }
+ * '200':
+ * description: "เพิ่มสำเร็จ"
  */
 router.route('/favorites')
   .get(protect, getFavoriteHairstyles)
@@ -308,19 +345,21 @@ router.route('/favorites')
  * delete:
  * summary: ลบทรงผมออกจากรายการโปรด
  * tags: [User Content]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * parameters:
  * - in: path
  * name: id
  * required: true
- * schema: { type: string }
+ * schema:
+ * type: string
  * description: ID ของทรงผมที่ต้องการลบ
  * responses:
- * 200: { description: "ลบสำเร็จ" }
+ * '200':
+ * description: "ลบสำเร็จ"
  */
 router.route('/favorites/:id')
   .delete(protect, removeFavoriteHairstyle);
-
 
 /**
  * @swagger
@@ -328,33 +367,41 @@ router.route('/favorites/:id')
  * get:
  * summary: ดูรูปภาพ Looks ที่บันทึกไว้ทั้งหมด
  * tags: [User Content]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * responses:
- * 200: { description: "รายการ URL รูปภาพที่บันทึกไว้" }
+ * '200':
+ * description: "รายการ URL รูปภาพที่บันทึกไว้"
  * post:
  * summary: อัปโหลดและบันทึก Look ใหม่
  * tags: [User Content]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * requestBody:
  * content:
  * multipart/form-data:
  * schema:
  * type: object
  * properties:
- * savedLookImage: { type: string, format: binary }
+ * savedLookImage:
+ * type: string
+ * format: binary
  * responses:
- * 201: { description: "บันทึก Look สำเร็จ" }
+ * '201':
+ * description: "บันทึก Look สำเร็จ"
  * delete:
  * summary: ลบ Look ที่บันทึกไว้
  * tags: [User Content]
- * security: [{ bearerAuth: [] }]
+ * security:
+ * - bearerAuth: []
  * requestBody:
  * content:
  * application/json:
  * schema:
  * $ref: '#/components/schemas/DeleteSavedLookInput'
  * responses:
- * 200: { description: "ลบ Look สำเร็จ" }
+ * '200':
+ * description: "ลบ Look สำเร็จ"
  */
 router.route('/saved-looks')
     .get(protect, getSavedLooks)
