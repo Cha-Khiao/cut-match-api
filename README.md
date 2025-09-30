@@ -5,7 +5,7 @@
     <strong>Backend API สำหรับแอปพลิเคชันค้นหา, ลอง, และแบ่งปันสไตล์ทรงผม</strong>
   </p>
   <p>
-    <a href="https://cut-match-api.onrender.com/api-docs">
+    <a href="https://cut-match-api.vercel.app/api-docs">
       <img src="https://img.shields.io/badge/API_Docs-Swagger-brightgreen.svg?style=for-the-badge" alt="API Documentation">
     </a>
     <img src="https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=nodedotjs" alt="Node.js version">
@@ -16,7 +16,7 @@
 
 ---
 
-## 📡 **BASE URL API:** **[https://cut-match-api.onrender.com/api](https://cut-match-api.onrender.com)**
+## 📡 **BASE URL API:** **[https://cut-match-api.vercel.app/api](https://cut-match-api.vercel.app)**
 
 ---
 
