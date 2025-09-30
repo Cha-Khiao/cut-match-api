@@ -18,7 +18,7 @@ const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select('-password');
       console.log('5. พบข้อมูล User:', req.user.username);
 
-      next(); // 🚀 สำคัญที่สุด: อนุญาตให้ไปต่อ!
+      next();
       console.log('6. ส่งต่อไปยัง Controller เรียบร้อย');
 
     } catch (error) {
