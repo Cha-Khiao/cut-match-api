@@ -77,7 +77,7 @@ const options = {
       },
       servers: [
         {
-          url: 'https://cut-match-api.vercel.app',
+          url: 'https://cut-match-api.onrender.com',
           description: 'Production Server (Vercel)',
         },
         {
