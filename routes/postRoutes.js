@@ -13,7 +13,6 @@ const {
 const { protect } = require('../middleware/authMiddleware.js');
 const upload = require('../middleware/uploadMiddleware.js');
 
-// ✨ ใช้ commentRouter สำหรับ path ที่ขึ้นต้นด้วย /:postId/comments
 router.use('/:postId/comments', commentRouter);
 
 /**

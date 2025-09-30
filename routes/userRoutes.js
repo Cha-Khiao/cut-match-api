@@ -21,7 +21,6 @@ const {
 const { protect } = require('../middleware/authMiddleware.js');
 const upload = require('../middleware/uploadMiddleware.js');
 
-// Middleware ตรวจสอบ validation result
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

@@ -11,7 +11,6 @@ const {
 } = require('../controllers/hairstyleController.js');
 const { protect, admin } = require('../middleware/authMiddleware.js');
 
-// ✅ Middleware ตรวจสอบ error ของ validation
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -20,7 +19,6 @@ const validateRequest = (req, res, next) => {
   next();
 };
 
-// ✅ Nested route → รีวิวของทรงผม
 router.use('/:id/reviews', reviewRouter);
 
 /**
