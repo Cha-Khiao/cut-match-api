@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/images/cut-match.png" alt="Cut Match Logo" width="120" />
+  <img src="public/images/cut-match-2.png" alt="Cut Match Logo" width="120" />
   <h1>Cut Match API ✂️</h1>
   <p>
     <strong>Backend API สำหรับแอปพลิเคชันค้นหา, ลอง, และแบ่งปันสไตล์ทรงผม</strong>
