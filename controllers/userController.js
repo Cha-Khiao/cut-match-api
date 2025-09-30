@@ -76,12 +76,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.email = req.body.email || user.email;
     if (req.body.salonName !== undefined) user.salonName = req.body.salonName;
     if (req.body.salonMapUrl !== undefined) user.salonMapUrl = req.body.salonMapUrl;
-    if (req.file) {
-      user.profileImageUrl = req.file.path;
-    }
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
+    if (req.file) user.profileImageUrl = req.file.path;
+    if (req.body.password) user.password = req.body.password;
+
     const updatedUser = await user.save();
     res.json(createAuthResponse(updatedUser));
   } else {
@@ -89,6 +86,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 });
+
 
 // @desc    Delete user profile
 const deleteUserProfile = asyncHandler(async (req, res) => {
