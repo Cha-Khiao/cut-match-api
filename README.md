@@ -106,7 +106,7 @@
   - `GET /`: ดึงการแจ้งเตือนทั้งหมด
   - `POST /mark-read`: อัปเดตสถานะว่าอ่านแล้ว
 
-> สำหรับรายละเอียดทั้งหมดของแต่ละ Endpoint รวมถึง Request Body และ Response Schemas กรุณาดูที่ **[Swagger API Docs](https://cut-match-api.onrender.com/api-docs)**
+> สำหรับรายละเอียดทั้งหมดของแต่ละ Endpoint รวมถึง Request Body และ Response Schemas กรุณาดูที่ **[Swagger API Docs](https://cut-match-api.vercel.app/api-docs)**
 
 ---
 
