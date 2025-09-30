@@ -304,7 +304,7 @@ router.use('/:postId/comments', commentRouter);
  *         description: Comment added successfully
  *       400:
  *         description: Bad request (e.g., missing content)
- *        401:
+ *       401:
  *         description: Unauthorized
  *       404:
  *         description: Post not found
