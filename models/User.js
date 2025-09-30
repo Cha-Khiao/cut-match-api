@@ -18,10 +18,10 @@ const userSchema = new mongoose.Schema({
   favorites: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hairstyle'
-  }], // <-- ✨ เพิ่ม comma ที่นี่
+  }],
   savedLooks: [{ 
     type: String 
-  }], // <-- ✨ เพิ่ม comma ที่นี่ (ถ้ามี field ต่อไป)
+  }],
   followers: [{ 
     type: mongoose.Schema.Types.ObjectId, ref: 'User' 
   }],
@@ -37,7 +37,6 @@ const userSchema = new mongoose.Schema({
   
 }, { timestamps: true });
 
-// เข้ารหัสรหัสผ่านก่อนบันทึก
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -46,7 +45,6 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// method สำหรับเปรียบเทียบรหัสผ่าน
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

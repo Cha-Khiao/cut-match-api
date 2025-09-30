@@ -13,7 +13,6 @@ const hairstyleSchema = new mongoose.Schema(
       required: true,
       enum: ['ชาย', 'หญิง', 'Unisex'],
     },
-    // --- เพิ่มฟิลด์เหล่านี้เข้ามา ---
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +29,6 @@ const hairstyleSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    // ------------------------------
   },
   { timestamps: true }
 );
