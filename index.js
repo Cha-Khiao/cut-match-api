@@ -1,7 +1,4 @@
-// =================================================================
 // ✨ 1. IMPORTS (การนำเข้าโมดูล)
-// =================================================================
-
 // Core Node/Express modules
 const express = require('express');
 const mongoose = require('mongoose');
@@ -25,20 +22,12 @@ const notificationRoutes = require('./routes/notificationRoutes.js');
 // Local Middleware
 const { errorHandler } = require('./middleware/errorMiddleware.js');
 
-
-// =================================================================
 // ✨ 2. INITIALIZATION & CONFIGURATION (การตั้งค่าเริ่มต้น)
-// =================================================================
-
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
-// =================================================================
 // ✨ 3. DATABASE CONNECTION (การเชื่อมต่อฐานข้อมูล)
-// =================================================================
-
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -51,10 +40,7 @@ const connectDB = async () => {
 connectDB();
 
 
-// =================================================================
 // ✨ 4. MIDDLEWARES (มิดเดิลแวร์)
-// =================================================================
-
 // Trust proxy for rate limiting on services like Render/Vercel
 app.set('trust proxy', 1);
 
@@ -80,7 +66,7 @@ app.use(
 
 // Rate limiting for all API routes
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 200, 
   standardHeaders: true,
   legacyHeaders: false,
@@ -89,10 +75,7 @@ const apiLimiter = rateLimit({
 app.use('/api', apiLimiter);
 
 
-// =================================================================
 // ✨ 5. API DOCUMENTATION (Swagger/OpenAPI)
-// =================================================================
-
 const swaggerOptions = {
     definition: {
       openapi: '3.0.0',
@@ -102,7 +85,7 @@ const swaggerOptions = {
         description: 'เอกสาร API สำหรับแอปพลิเคชัน Cut Match',
       },
       servers: [
-        { url: 'https://cut-match-api.onrender.com', description: 'เซิร์ฟเวอร์ใช้งานจริง (Production)' },
+        { url: 'https://cut-match-api.vercel.app', description: 'เซิร์ฟเวอร์ใช้งานจริง (Production)' },
         { url: `http://localhost:${PORT}`, description: 'เซิร์ฟเวอร์สำหรับพัฒนา (Development)' }
       ],
       components: {
@@ -125,28 +108,20 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
   customfavIcon: "/images/Node.png"
 }));
 
-
-// =================================================================
 // ✨ 6. API ROUTES (เส้นทาง API)
-// =================================================================
-
 // Redirect root to API docs
 app.get('/', (req, res) => {
   res.redirect('/api-docs');
 });
 
 app.use('/api/users', userRoutes);
-app.use('/api/hairstyles', hairstyleRoutes); // Handles /reviews internally
+app.use('/api/hairstyles', hairstyleRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/salons', salonRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-
-// =================================================================
 // ✨ 7. ERROR HANDLING & SERVER START
-// =================================================================
-
 // Centralized Error Handler (must be after all routes)
 app.use(errorHandler);
 
