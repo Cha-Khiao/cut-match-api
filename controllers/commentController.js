@@ -14,7 +14,6 @@ const createComment = asyncHandler(async (req, res) => {
     const comment = new Comment({ text, author: req.user._id, post: postId });
     const createdComment = await comment.save();
 
-    // --- ✨ สร้าง Notification ✨ ---
     if (!post.author.equals(req.user._id)) {
         await Notification.create({
             recipient: post.author,
@@ -23,10 +22,8 @@ const createComment = asyncHandler(async (req, res) => {
             post: postId,
         });
     }
-    // --- ✨ เพิ่ม Logic อัปเดตจำนวนคอมเมนต์ ✨ ---
     post.commentCount = (post.commentCount || 0) + 1;
     await post.save();
-    // ------------------------------------------
 
     const populatedComment = await Comment.findById(createdComment._id).populate('author', 'username profileImageUrl');
     res.status(201).json(populatedComment);
@@ -64,7 +61,6 @@ const replyToComment = asyncHandler(async (req, res) => {
       parentComment: parentCommentId,
     });
 
-    // --- ✨ สร้าง Notification ✨ ---
     if (!parentComment.author.equals(req.user._id)) {
         await Notification.create({
             recipient: parentComment.author,
@@ -99,7 +95,6 @@ const updateComment = asyncHandler(async (req, res) => {
         comment.text = text || comment.text;
         await comment.save();
 
-        // --- ✨ แก้ไขส่วนนี้ให้มีการ Populate ซ้อนกัน ✨ ---
         const updatedComment = await Comment.findById(comment._id)
             .populate('author', 'username profileImageUrl')
             .populate({

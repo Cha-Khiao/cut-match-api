@@ -11,7 +11,6 @@ const createHairstyleReview = asyncHandler(async (req, res) => {
   const hairstyle = await Hairstyle.findById(hairstyleId);
 
   if (hairstyle) {
-    // เช็คว่า user เคยรีวิวทรงผมนี้ไปแล้วหรือยัง
     const alreadyReviewed = await Review.findOne({
         hairstyle: hairstyleId,
         user: req.user._id,
@@ -31,7 +30,6 @@ const createHairstyleReview = asyncHandler(async (req, res) => {
 
     const createdReview = await review.save();
 
-    // อัปเดตคะแนนเฉลี่ยใน Hairstyle document
     const allReviews = await Review.find({ hairstyle: hairstyleId });
     hairstyle.reviews.push(createdReview._id);
     hairstyle.numReviews = allReviews.length;
