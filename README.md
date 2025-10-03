@@ -106,7 +106,7 @@
   - `GET /`: ดึงการแจ้งเตือนทั้งหมด
   - `POST /mark-read`: อัปเดตสถานะว่าอ่านแล้ว
 
-> สำหรับรายละเอียดทั้งหมดของแต่ละ Endpoint รวมถึง Request Body และ Response Schemas กรุณาดูที่ **[Swagger API Docs](https://cut-match-api.vercel.app/api-docs)**
+> สำหรับรายละเอียดทั้งหมดของแต่ละ Endpoint รวมถึง Request Body และ Response Schemas กรุณาดูที่ **[Cut-Match API Docs](https://cut-match-api.vercel.app/api-docs)**
 
 ---
 
@@ -122,7 +122,7 @@
 ### ขั้นตอนการติดตั้ง
 1.  **Clone a repository:**
     ```bash
-    git clone [https://github.com/your-username/cut-match-api.git](https://github.com/your-username/cut-match-api.git)
+    git clone [https://github.com/your-username/cut-match-api.git]
     cd cut-match-api
     ```
 
